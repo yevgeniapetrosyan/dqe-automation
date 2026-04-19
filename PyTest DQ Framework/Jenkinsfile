@@ -1,0 +1,79 @@
+pipeline {
+    agent any
+
+    environment {
+        POSTGRES_SECRET = credentials('jenkins-postgres-credentials')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Set up Python') {
+            steps {
+                // Adjust Python version if needed
+                sh '''
+                python -m venv venv
+                . venv/bin/activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Data Quality Tests') {
+            steps {
+                sh '''
+                . venv/bin/activate
+                pytest tests/dq\\ checks/parquet_files/test_facility_name_min_time_spent_per_visit_date.py \
+                    --parquet_path="parquet_data/facility_name_min_time_spent_per_visit_date.parquet" \
+                    --db_host="postgres" \
+                    --db_port="5432" \
+                    --db_name="mydatabase" \
+                    --db_user=$POSTGRES_SECRET_USR \
+                    --db_password=$POSTGRES_SECRET_PSW \
+                    --html=html_report/facility_name_min_time_spent_per_visit_date.html
+
+                pytest tests/dq\\ checks/parquet_files/test_facility_type_avg_time_spent_per_visit_date.py \
+                    --parquet_path="parquet_data/facility_type_avg_time_spent_per_visit_date.parquet" \
+                    --db_host="postgres" \
+                    --db_port="5432" \
+                    --db_name="mydatabase" \
+                    --db_user=$POSTGRES_SECRET_USR \
+                    --db_password=$POSTGRES_SECRET_PSW \
+                    --html=html_report/facility_type_avg_time_spent_per_visit_date.html
+
+                pytest tests/dq\\ checks/parquet_files/test_patient_sum_treatment_cost_per_facility_type.py \
+                    --parquet_path="parquet_data/patient_sum_treatment_cost_per_facility_type.parquet" \
+                    --db_host="postgres" \
+                    --db_port="5432" \
+                    --db_name="mydatabase" \
+                    --db_user=$POSTGRES_SECRET_USR \
+                    --db_password=$POSTGRES_SECRET_PSW \
+                    --html=html_report/patient_sum_treatment_cost_per_facility_type.html
+                '''
+            }
+        }
+
+        stage('Archive Test Reports') {
+            steps {
+                archiveArtifacts artifacts: 'html_report/**', allowEmptyArchive: true
+            }
+        }
+
+        stage('Publish HTML Reports') {
+            steps {
+                publishHTML(target: [
+                    allowMissing: false,
+                    keepAll: true,
+                    reportDir: 'html_report',
+                    reportFiles: 'facility_name_min_time_spent_per_visit_date.html,facility_type_avg_time_spent_per_visit_date.html,patient_sum_treatment_cost_per_facility_type.html',
+                    reportName: 'Data Quality Test Reports'
+                ])
+            }
+        }
+    }
+}

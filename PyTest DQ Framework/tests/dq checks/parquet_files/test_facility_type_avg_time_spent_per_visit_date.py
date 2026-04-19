@@ -1,0 +1,36 @@
+"""
+Description: Data Quality checks for facility_type_avg_time_spent_per_visit_date
+Requirement(s): TICKET-0002
+Author(s): Yevgenia Petrosyan
+"""
+
+import pytest
+
+
+@pytest.mark.parquet_data
+@pytest.mark.smoke
+@pytest.mark.facility_type_avg_time_spent_per_visit_date
+def test_check_dataset_is_not_empty(target_data, data_quality_library):
+    """
+    Description: Checks that the target dataset is not empty.
+    """
+    data_quality_library.check_dataset_is_not_empty(target_data)
+
+
+@pytest.mark.parquet_data
+@pytest.mark.facility_type_avg_time_spent_per_visit_date
+def test_avg_time_spent_positive(target_data):
+    """
+    Description: Checks that all values in the avg_time_spent column are positive.
+    """
+    assert (target_data['avg_time_spent'] > 0).all(), "There are non-positive values in avg_time_spent column"
+
+
+@pytest.mark.parquet_data
+@pytest.mark.facility_type_avg_time_spent_per_visit_date
+def test_check_not_null_values(target_data, data_quality_library):
+    """
+    Description: Validates that specific columns in the dataset do not contain null values.
+    """
+    data_quality_library.check_not_null_values(target_data, ['facility_type', 'visit_date', 'avg_time_spent'])
+    

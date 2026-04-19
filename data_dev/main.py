@@ -1,8 +1,8 @@
-from src.connectors.postgre_connector import PostgresConnectorContextManager
-from src.data.inject_generated_data_to_src import GeneratedDataLoader
-from src.data.nf3_loader import NF3Loader
-from src.data.parquet_loader import LoadParquet
-from src.reporting.report_generator import ReportGenerator
+from data_dev.src.connectors.postgre_connector import PostgresConnectorContextManager
+from data_dev.src.data.inject_generated_data_to_src import GeneratedDataLoader
+from data_dev.src.data.nf3_loader import NF3Loader
+from data_dev.src.data.parquet_loader import LoadParquet
+from data_dev.src.reporting.report_generator import ReportGenerator
 
 import logging
 import warnings
