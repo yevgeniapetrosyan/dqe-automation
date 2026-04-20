@@ -28,7 +28,7 @@ pipeline {
             steps {
                 sh '''
                 . venv/bin/activate
-                pytest -rs -v --ignore="PyTest Introduction" tests/dq\\ checks/parquet_files/test_facility_name_min_time_spent_per_visit_date.py \
+                pytest -m facility_name_min_time_spent_per_visit_date \
                     --facility_name_parquet_path="$WORKSPACE/parquet_data/facility_name_min_time_spent_per_visit_date" \
                     --db_host="postgres" \
                     --db_port="5432" \
@@ -37,7 +37,7 @@ pipeline {
                     --db_password=$POSTGRES_SECRET_PSW \
                     --html=html_report/facility_name_min_time_spent_per_visit_date.html
 
-                pytest -rs -v --ignore="PyTest Introduction" tests/dq\\ checks/parquet_files/test_facility_type_avg_time_spent_per_visit_date.py \
+                pytest -m facility_type_avg_time_spent_per_visit_date \
                     --facility_type_parquet_path="$WORKSPACE/parquet_data/facility_type_avg_time_spent_per_visit_date" \
                     --db_host="postgres" \
                     --db_port="5432" \
@@ -46,7 +46,7 @@ pipeline {
                     --db_password=$POSTGRES_SECRET_PSW \
                     --html=html_report/facility_type_avg_time_spent_per_visit_date.html
 
-                pytest -rs -v --ignore="PyTest Introduction" tests/dq\\ checks/parquet_files/test_patient_sum_treatment_cost_per_facility_type.py \
+                pytest -m patient_sum_treatment_cost_per_facility_type \
                     --patient_sum_treatment_cost_parquet_path="$WORKSPACE/parquet_data/patient_sum_treatment_cost_per_facility_type" \
                     --db_host="postgres" \
                     --db_port="5432" \
