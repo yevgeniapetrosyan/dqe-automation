@@ -14,11 +14,11 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "example: mark test as example")
 
 def pytest_addoption(parser):
-    parser.addoption("--db_host", action="store", default="localhost", help="Database host")
+    parser.addoption("--db_host", action="store", default="postgres", help="Database host")
     parser.addoption("--db_user", action="store", default="myuser", help="Database user")
     parser.addoption("--db_password", action="store", default="mypassword", help="Database password")
     parser.addoption("--db_name", action="store", default="mydatabase", help="Database name")
-    parser.addoption("--db_port", action="store", default=5434, type=int, help="Database port")
+    parser.addoption("--db_port", action="store", default=5432, type=int, help="Database port")
     
     # Calculate default parquet path relative to workspace root
     # conftest.py -> tests -> PyTest DQ Framework -> dqe-automation -> DQ Automation (workspace root)
