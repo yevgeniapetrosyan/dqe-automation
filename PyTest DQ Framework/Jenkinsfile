@@ -28,6 +28,8 @@ pipeline {
             steps {
                 sh '''
                 . venv/bin/activate
+                cd "PyTest DQ Framework"
+                mkdir -p html_report
                 pytest -m facility_name_min_time_spent_per_visit_date \
                     --facility_name_parquet_path="$WORKSPACE/parquet_data/facility_name_min_time_spent_per_visit_date" \
                     --db_host="postgres" \
@@ -60,7 +62,7 @@ pipeline {
 
         stage('Archive Test Reports') {
             steps {
-                archiveArtifacts artifacts: 'html_report/**', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'PyTest DQ Framework/html_report/**', allowEmptyArchive: true
             }
         }
 
@@ -69,7 +71,7 @@ pipeline {
                 publishHTML(target: [
                     allowMissing: false,
                     keepAll: true,
-                    reportDir: 'html_report',
+                    reportDir: 'PyTest DQ Framework/html_report',
                     reportFiles: 'facility_name_min_time_spent_per_visit_date.html,facility_type_avg_time_spent_per_visit_date.html,patient_sum_treatment_cost_per_facility_type.html',
                     reportName: 'Data Quality Test Reports'
                 ])
