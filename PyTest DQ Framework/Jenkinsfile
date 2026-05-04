@@ -30,6 +30,16 @@ pipeline {
                 . venv/bin/activate
                 cd "PyTest DQ Framework"
                 mkdir -p html_report
+                
+                # Check if parquet data exists
+                if [ -d "$WORKSPACE/parquet_data" ]; then
+                    echo "Parquet data directory found"
+                    ls -la "$WORKSPACE/parquet_data/" | head -5
+                else
+                    echo "WARNING: Parquet data directory not found at $WORKSPACE/parquet_data"
+                    echo "Tests will be skipped due to missing data"
+                fi
+                
                 pytest -m facility_name_min_time_spent_per_visit_date \
                     --facility_name_parquet_path="$WORKSPACE/parquet_data/facility_name_min_time_spent_per_visit_date" \
                     --db_host="postgres" \

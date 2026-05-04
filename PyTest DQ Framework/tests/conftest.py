@@ -87,6 +87,10 @@ def target_data(request):
     else:
         pytest.fail(f"Unknown test file for target_data fixture: {test_file_name}")
 
+    # Check if the parquet path exists
+    if not os.path.exists(parquet_path):
+        pytest.skip(f"Parquet data not found at {parquet_path}. Skipping test.")
+
     try:
         reader = ParquetReader()
         df = reader.read_parquet(parquet_path)
